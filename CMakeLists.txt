@@ -42,7 +42,7 @@ include_directories(
 
 include_directories( ${qtdesigner_SOURCE_DIR} ${qtdesigner_BINARY_DIR})
 
-add_definitions( -DKDE_DEFAULT_DEBUG_AREA=9038 )
+#add_definitions( -DKDE_DEFAULT_DEBUG_AREA=9038 )
 
 ########### next target ###############
 

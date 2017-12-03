@@ -40,6 +40,7 @@
 #include <kstandardaction.h>
 #include <kicon.h>
 #include <kactioncollection.h>
+#include <kdebug.h>
 
 #include <interfaces/icore.h>
 #include <interfaces/idocumentcontroller.h>
