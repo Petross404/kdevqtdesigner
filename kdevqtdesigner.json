@@ -1,0 +1,25 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "petross404@gmail.com",
+                "Name": "Petross404",
+                "Name[x-test]": ""
+            }
+        ],
+        "Category": "Utilities",
+        "Description": "Enables viewing and editing of the .ui files",
+        "Description[gr]": ""
+        "Icon": "designer",
+        "Id": "kdevqtdesigner",
+        "License": "GPL",
+        "Name": "Ui Editor",
+        "Name[x-test]": "xxUi Editorxx",
+        "ServiceTypes": [
+            "KDevelop/Plugin"
+        ],
+        "Version": "0.1.0"
+    },
+    "X-KDevelop-Category": "Global",
+    "X-KDevelop-Mode": "GUI"
+}
