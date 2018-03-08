@@ -27,7 +27,6 @@
 #include <QtCore/QPluginLoader>
 #include <QMdiSubWindow>
 
-#include <kdebug.h>
 #include <QDebug>
 
 //#include <klocale.h>
@@ -54,7 +53,7 @@ QtDesignerWidget::QtDesignerWidget( QWidget* parent, QtDesignerDocument* documen
 
     QDesignerFormWindowInterface* form = m_document->form();
 
-    setComponentData( m_document->designerPlugin()->componentData() );
+    setComponentName( m_document->designerPlugin()->componentName(), "");
     setXMLFile( "kdevqtdesigner.rc" );
 
     QMdiSubWindow* window = addSubWindow(form, Qt::Window | Qt::WindowShadeButtonHint | Qt::WindowSystemMenuHint | Qt::WindowTitleHint);
@@ -97,14 +96,14 @@ void QtDesignerWidget::setupActions()
     QAction* action = ac->addAction( "widgeteditor" );
     action->setCheckable( true );
     action->setChecked( true );
-    action->setText( i18n("Edit Widgets") );
+    action->setText( tr("Edit Widgets") );
     connect( action, SIGNAL(triggered()), SLOT(editWidgets()));
     foreach (QObject *plugin, QPluginLoader::staticInstances())
     {
         if ( !plugin )
             continue;
 
-        kDebug() << "checking plugin:" << plugin;
+        qDebug() << "checking plugin:" << plugin;
         QDesignerFormEditorPluginInterface *fep;
 
         if ( (fep = qobject_cast<QDesignerFormEditorPluginInterface*>(plugin)) )
@@ -127,7 +126,7 @@ void QtDesignerWidget::setupActions()
                 actionCollection()->addAction("tabordereditor", fep->action());
             }
 
-            kDebug(9038) << "Added action:" << fep->action()->objectName() << "|" << fep->action()->text();
+            qDebug() << "Added action:" << fep->action()->objectName() << "|" << fep->action()->text();
         }
     }
 }

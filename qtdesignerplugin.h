@@ -55,20 +55,20 @@ class QtDesignerPlugin: public KDevelop::IPlugin
 {
     Q_OBJECT
 public:
-    QtDesignerPlugin(QObject *parent, const QVariantList &args = QVariantList() );
+    QtDesignerPlugin(QObject* parent, const QVariantList& args = QVariantList());
     virtual ~QtDesignerPlugin();
 
 //   virtual bool openFile();
 //   virtual bool saveFile();
 
     QDesignerFormEditorInterface *designer() const;
-public Q_SLOTS:
+public slots:
 //     void activateDocument( KDevelop::IDocument* );
 protected:
 
 private:
 
-private Q_SLOTS:
+private slots:
 //     void saveActiveDocument();
 private:
     QDesignerIntegrationInterface* m_designer;

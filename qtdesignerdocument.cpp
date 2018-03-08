@@ -70,7 +70,7 @@ QtDesignerDocument::QtDesignerDocument( const QUrl& url , KDevelop::ICore* core 
 
 }
 
-QtSharedPointer<QMimeType> QtDesignerDocument::mimeType() const
+QMimeType QtDesignerDocument::mimeType() const
 {
     return QMimeType::mimeType("application/x-designer");
 }
@@ -90,7 +90,7 @@ bool QtDesignerDocument::save(KDevelop::IDocument::DocumentSaveMode mode)
     if (mode & Discard)
         return true;
 
-    kDebug(9038) << "Going to Save";
+    qDebug() << "Going to Save";
     if( m_state == KDevelop::IDocument::Clean )
         return false;
     if( !m_form )
@@ -98,7 +98,7 @@ bool QtDesignerDocument::save(KDevelop::IDocument::DocumentSaveMode mode)
     QFile f(url().toLocalFile());
     if( !f.open( QIODevice::WriteOnly ) )
     {
-        kDebug(9038) << "Couldn't open file:" << f.error();
+        qDebug() << "Couldn't open file:" << f.error();
         return false;
     }
     QTextStream s(&f);
@@ -120,7 +120,7 @@ void QtDesignerDocument::reload()
 
 bool QtDesignerDocument::close(KDevelop::IDocument::DocumentSaveMode mode)
 {
-    QDebug() << "form:" << m_form;
+    qDebug() << "form:" << m_form;
     if (!(mode & Discard)) {
         if (mode & Silent) {
             if (!save(mode))
@@ -128,16 +128,16 @@ bool QtDesignerDocument::close(KDevelop::IDocument::DocumentSaveMode mode)
 
         } else {
             if (state() == IDocument::Modified) {
-                int code = KMessageBox::warningYesNoCancel(
+                int code = QMessageBox::warning(
                     qApp->activeWindow(),
-                    i18n("The document \"%1\" has unsaved changes. Would you like to save them?", url().toLocalFile()),
-                    i18n("Close Document"));
+                    tr("The document \"%1\" has unsaved changes. Would you like to save them?", url().toLocalFile().toLocal8Bit().constData()),
+                    tr("Close Document"));
 
-                if (code == KMessageBox::Yes) {
+                if (code == QMessageBox::Yes) {
                     if (!save(mode))
                         return false;
 
-                } else if (code == KMessageBox::Cancel) {
+                } else if (code == QMessageBox::Cancel) {
                     return false;
                 }
 
@@ -156,9 +156,9 @@ bool QtDesignerDocument::close(KDevelop::IDocument::DocumentSaveMode mode)
         QList<Sublime::View*> areaViews = area->views();
         foreach (Sublime::View *view, areaViews) {
             if (views().contains(view)) {
-                QDebug() << "form before:" << m_form;
-                QDebug() << "closing view" << view;
-                QDebug() << "form after:" << m_form;
+                qDebug() << "form before:" << m_form;
+                qDebug() << "closing view" << view;
+                qDebug() << "form after:" << m_form;
                 area->removeView(view);
                 delete view;
             }
@@ -168,7 +168,7 @@ bool QtDesignerDocument::close(KDevelop::IDocument::DocumentSaveMode mode)
 //    kDebug() << "removing" << m_form << "from window manager";
  //   m_designerPlugin->designer()->formWindowManager()->removeFormWindow(m_form);
 
-    KDevelop::ICore::self()->documentController()->notifyDocumentClosed(this);
+	KDevelop::ICore::self()->documentController()->documentClosed(this);
 
     // Here we go...
     deleteLater();
@@ -217,7 +217,7 @@ Sublime::View *QtDesignerDocument::newView(Sublime::Document* doc)
         uiFile.open(QIODevice::ReadOnly | QIODevice::Text);
 
         m_form = designerPlugin()->designer()->formWindowManager()->createFormWindow();
-	  QDebug(9038) << "now we have" << m_form->core()->formWindowManager()->formWindowCount() << 
+	  qDebug() << "now we have" << m_form->core()->formWindowManager()->formWindowCount() << 
 "formwindows";
         m_form->setFileName(url().toLocalFile());
         m_form->setContents(&uiFile);

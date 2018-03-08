@@ -36,11 +36,8 @@
 #include <kpluginloader.h>
 #include <kparts/mainwindow.h>
 #include <kparts/partmanager.h>
-#include <ksavefile.h>
 #include <kstandardaction.h>
-#include <kicon.h>
 #include <kactioncollection.h>
-#include <kdebug.h>
 
 #include <interfaces/icore.h>
 #include <interfaces/idocumentcontroller.h>
@@ -59,11 +56,12 @@ public:
     {
     }
 
-    KDevelop::IDocument* create( const KUrl& url, KDevelop::ICore* core)
+    KDevelop::IDocument* create( const QUrl& url, KDevelop::ICore* core)
     {
-        QDebug(9038) << "creating doc for designer?";
-        QMimeType::Ptr mimetype = QMimeType::findByUrl(url);
-        QDebug(9038) << "mimetype for" << url << "is" << mimetype->name();
+		QMimeDatabase db;
+        qDebug() << "creating doc for designer?";
+        QMimeType* mimetype = new QMimeType(db.mimeTypeForUrl(url));
+        qDebug() << "mimetype for" << url << "is" << mimetype->name();
         if( mimetype->name() == "application/x-designer" )
         {
             QtDesignerDocument* d = new QtDesignerDocument(url, core);
@@ -108,7 +106,7 @@ public:
             return QDesignerComponents::createSignalSlotEditor(m_plugin->designer(), 0);
         else if( m_type == ResourceEditor )
             return QDesignerComponents::createResourceEditor(m_plugin->designer(), 0);
-        kDebug(9038) << "Type not found:" << m_type;
+        qDebug() << "Type not found:" << m_type;
         return 0;
     }
     virtual Qt::DockWidgetArea defaultPosition()
@@ -125,7 +123,7 @@ public:
             return Qt::BottomDockWidgetArea;
         else if( m_type == ResourceEditor )
             return Qt::BottomDockWidgetArea;
-        kDebug(9038) << "Type not found:" << m_type;
+        qDebug() << "Type not found:" << m_type;
         return Qt::TopDockWidgetArea;
     }
 
@@ -152,8 +150,9 @@ private:
 };
 
 QtDesignerPlugin::QtDesignerPlugin(QObject *parent, const QVariantList &args)
-    : KDevelop::IPlugin(QtDesignerPluginFactory::componentData(),parent),
-      m_docFactory(new QtDesignerDocumentFactory(this)),
+//	: KDevelop::IPlugin(QtDesignerPluginFactory::componentName(),parent),
+	: KDevelop::IPlugin( componentName(), parent), 
+	  m_docFactory(new QtDesignerDocumentFactory(this)),
       m_widgetBoxFactory(0), m_propertyEditorFactory(0),
       m_objectInspectorFactory(0), m_actionEditorFactory(0)
 {
@@ -165,7 +164,7 @@ QtDesignerPlugin::QtDesignerPlugin(QObject *parent, const QVariantList &args)
     QDesignerFormEditorInterface* formeditor = QDesignerComponents::createFormEditor(this);
     QDesignerComponents::initializePlugins( formeditor );
 
-    kDebug(9038) << "integration:" << formeditor->integration();
+    qDebug() << "integration:" << formeditor->integration();
 
     //TODO apaku: if multiple mainwindows exist, this needs to be changed on mainwindow-change
     formeditor->setTopLevel(core()->uiController()->activeMainWindow());
@@ -180,15 +179,16 @@ QtDesignerPlugin::QtDesignerPlugin(QObject *parent, const QVariantList &args)
     formeditor->setActionEditor(QDesignerComponents::createActionEditor(formeditor, 0));
     formeditor->setObjectInspector(QDesignerComponents::createObjectInspector(formeditor, 0));
 
-    m_designer = new qdesigner_internal::QDesignerIntegration(formeditor, this);
+    m_designer = new QDesignerIntegration(formeditor, this);
+    //m_designer = new qdesigner_internal::QDesignerIntegration( formeditor, this );
     qdesigner_internal::QDesignerIntegration::initializePlugins( formeditor );
 
-    kDebug() << "integration now:" << formeditor->integration();
+    qDebug() << "integration now:" << formeditor->integration();
 
-    m_designer->core()->widgetBox()->setObjectName( i18n("Widget Box") );
-    m_designer->core()->propertyEditor()->setObjectName( i18n("Property Editor") );
-    m_designer->core()->actionEditor()->setObjectName( i18n("Action Editor") );
-    m_designer->core()->objectInspector()->setObjectName( i18n("Object Inspector") );
+    m_designer->core()->widgetBox()->setObjectName( tr("Widget Box") );
+    m_designer->core()->propertyEditor()->setObjectName( tr("Property Editor") );
+    m_designer->core()->actionEditor()->setObjectName( tr("Action Editor") );
+    m_designer->core()->objectInspector()->setObjectName( tr("Object Inspector") );
 
 
     foreach (QObject *plugin, QPluginLoader::staticInstances())
