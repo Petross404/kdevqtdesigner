@@ -49,9 +49,12 @@
 #include <QMdiSubWindow>
 #include <QtCore/QFile>
 #include <QApplication>
-#include <KMessageBox>
 #include <QLocale>
 #include <QDebug>
+#include <QMessageBox>
+// TODO Review this
+#include <QtCore/QMimeDatabase>
+#include <QtCore/QMimeType>
 
 #include <interfaces/icore.h>
 #include <interfaces/iuicontroller.h>
@@ -70,9 +73,12 @@ QtDesignerDocument::QtDesignerDocument( const QUrl& url , KDevelop::ICore* core 
 
 }
 
+// TODO Review this
 QMimeType QtDesignerDocument::mimeType() const
 {
-    return QMimeType::mimeType("application/x-designer");
+    QMimeDatabase db;
+    QMimeType mime = db.mimeTypeForName("application/x-designer");
+    return mime;
 }
 
 KParts::Part* QtDesignerDocument::partForView(QWidget*) const

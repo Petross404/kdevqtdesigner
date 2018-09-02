@@ -27,20 +27,18 @@
 
 class QtDesignerDocument;
 
-class QtDesignerWidget : public QMdiArea, public KXMLGUIClient
+class QtDesignerWidget:public QMdiArea, public KXMLGUIClient
 {
-    Q_OBJECT
-    public:
-        QtDesignerWidget( QWidget* parent, QtDesignerDocument* document );
-    private slots:
-        void save();
-        void editWidgets();
-        void editBuddys();
-        void editSignals();
-        void editTabOrder();
-    private:
-        void setupActions();
-        QtDesignerDocument* m_document;
+Q_OBJECT public:
+    QtDesignerWidget (QWidget * parent, QtDesignerDocument * document);
+  private slots:void save ();
+  void editWidgets ();
+  void editBuddys ();
+  void editSignals ();
+  void editTabOrder ();
+private:
+  void setupActions ();
+  QtDesignerDocument *m_document;
 };
 
 #endif

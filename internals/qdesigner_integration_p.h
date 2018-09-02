@@ -37,6 +37,7 @@
 
 #include "shared_global_p.h"
 #include <QtDesigner/QDesignerIntegrationInterface>
+#include <QtDesigner/abstractformwindowmanager.h>
 
 #include <QtCore/QObject>
 

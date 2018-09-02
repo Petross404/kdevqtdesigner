@@ -26,7 +26,7 @@
 
 #include <sublime/urldocument.h>
 #include <interfaces/idocument.h>
-#include <QSharedPointer>
+#include <QMimeType>
 namespace KDevelop
 {
     class ICore;
@@ -44,7 +44,6 @@ public:
 
     QUrl url() const { return Sublime::UrlDocument::url(); }
 
-    //virtual QSharedPointer<QMimeType> mimeType() const;
     virtual QMimeType mimeType() const;
     virtual KParts::Part* partForView(QWidget*) const;
     virtual KTextEditor::Document* textDocument() const;

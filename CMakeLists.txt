@@ -70,6 +70,7 @@ TARGET_LINK_LIBRARIES(kdevqtdesigner
     KDev::Shell
     KF5::WidgetsAddons
     Qt5::UiPlugin
+    Qt5::Designer
     )
 install(TARGETS kdevqtdesigner DESTINATION ${PLUGIN_INSTALL_DIR})
 
