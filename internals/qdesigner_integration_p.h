@@ -54,42 +54,41 @@ struct Selection;
 
 class QDESIGNER_SHARED_EXPORT QDesignerIntegration: public QDesignerIntegrationInterface
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    QDesignerIntegration(QDesignerFormEditorInterface *core, QObject *parent = Q_NULLPTR);
-    virtual ~QDesignerIntegration();
+	QDesignerIntegration(QDesignerFormEditorInterface *core, QObject *parent = Q_NULLPTR);
+	virtual ~QDesignerIntegration();
 
-    QWidget *containerWindow(QWidget *widget) const override;
+	QWidget *containerWindow(QWidget *widget) const override;
 
-    // Load plugins into widget database and factory.
-    static void initializePlugins(QDesignerFormEditorInterface *formEditor);
+	// Load plugins into widget database and factory.
+	static void initializePlugins(QDesignerFormEditorInterface *formEditor);
 
 signals:
-    void propertyChanged(QDesignerFormWindowInterface *formWindow, const QString &name, const QVariant &value);
+	void propertyChanged(QDesignerFormWindowInterface *formWindow, const QString &name, const QVariant &value);
 
 public slots:
-    //virtual void updateProperty(const QString &name, const QVariant &value);
-    // Additional signals of designer property editor
-    virtual void updatePropertyComment(const QString &name, const QString &value);
-    void resetProperty(const QString &name) override;
-    void addDynamicProperty(const QString &name, const QVariant &value) override;
-    void removeDynamicProperty(const QString &name) override;
+	//virtual void updateProperty(const QString &name, const QVariant &value);
+	// Additional signals of designer property editor
+	virtual void updatePropertyComment(const QString &name, const QString &value);
+	void resetProperty(const QString &name) override;
+	void addDynamicProperty(const QString &name, const QVariant &value) override;
+	void removeDynamicProperty(const QString &name) override;
 
+	void updateActiveFormWindow(QDesignerFormWindowInterface *formWindow) override;
+	void setupFormWindow(QDesignerFormWindowInterface *formWindow) override;
+	void updateSelection() override;
+	void updateGeometry() ;
+	void activateWidget(QWidget *widget) ;
 
-    void updateActiveFormWindow(QDesignerFormWindowInterface *formWindow) override;
-    void setupFormWindow(QDesignerFormWindowInterface *formWindow) override;
-    void updateSelection() override;
-    void updateGeometry() ;
-    void activateWidget(QWidget *widget) ;
-
-    void updateCustomWidgetPlugins();
+	void updateCustomWidgetPlugins() override;
 
 private:
-    void initialize();
-    void getSelection(Selection &s);
-    QObject *propertyEditorObject();
+	void initialize();
+	void getSelection(Selection &s);
+	QObject *propertyEditorObject();
 
-    QDesignerFormWindowManagerInterface *m_formWindowManager;
+	QDesignerFormWindowManagerInterface *m_formWindowManager;
 };
 
 } // namespace qdesigner_internal

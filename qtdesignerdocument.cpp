@@ -83,26 +83,32 @@ QMimeType QtDesignerDocument::mimeType() const
 
 KParts::Part *QtDesignerDocument::partForView(QWidget *) const
 {
-	return 0;
+	return Q_NULLPTR;
 }
 
 KTextEditor::Document *QtDesignerDocument::textDocument() const
 {
-	return 0;
+	return Q_NULLPTR;
 }
 
 bool QtDesignerDocument::save(KDevelop::IDocument::DocumentSaveMode mode)
 {
 	if (mode & Discard)
+	{
 		return true;
+	}
 
 	qDebug() << "Going to Save";
 
 	if (m_state == KDevelop::IDocument::Clean)
+	{
 		return false;
+	}
 
 	if (!m_form)
+	{
 		return false;
+	}
 
 	QFile f(url().toLocalFile());
 
@@ -138,8 +144,9 @@ bool QtDesignerDocument::close(KDevelop::IDocument::DocumentSaveMode mode)
 		if (mode & Silent)
 		{
 			if (!save(mode))
+			{
 				return false;
-
+			}
 		}
 		else
 		{
@@ -153,8 +160,9 @@ bool QtDesignerDocument::close(KDevelop::IDocument::DocumentSaveMode mode)
 				if (code == QMessageBox::Yes)
 				{
 					if (!save(mode))
+					{
 						return false;
-
+					}
 				}
 				else if (code == QMessageBox::Cancel)
 				{
@@ -165,7 +173,9 @@ bool QtDesignerDocument::close(KDevelop::IDocument::DocumentSaveMode mode)
 			else if (state() == IDocument::DirtyAndModified)
 			{
 				if (!save(mode))
+				{
 					return false;
+				}
 			}
 		}
 	}
@@ -207,7 +217,9 @@ bool QtDesignerDocument::isActive() const
 		m_designerPlugin->designer()->formWindowManager()->activeFormWindow();
 
 	if (activeWin == m_form)
+	{
 		return true;
+	}
 
 	return false;
 }
@@ -237,25 +249,7 @@ void QtDesignerDocument::setDesignerPlugin(QtDesignerPlugin *plugin)
 	m_designerPlugin = plugin;
 }
 
-Sublime::View *QtDesignerDocument::newView(Sublime::Document *doc)
-{
-	if (qobject_cast<QtDesignerDocument *>(doc))
-	{
-		QFile uiFile(url().toLocalFile());
-		uiFile.open(QIODevice::ReadOnly | QIODevice::Text);
 
-		m_form = designerPlugin()->designer()->formWindowManager()->createFormWindow();
-		qDebug() << "now we have" << m_form->core()->formWindowManager()->formWindowCount() <<
-			 "formwindows";
-		m_form->setFileName(url().toLocalFile());
-		m_form->setContents(&uiFile);
-		connect(m_form, SIGNAL(changed()), this, SLOT(formChanged()));
-		designerPlugin()->designer()->formWindowManager()->setActiveFormWindow(m_form);
-		return new QtDesignerView(this);
-	}
-
-	return 0;
-}
 
 QDesignerFormWindowInterface *QtDesignerDocument::form()
 {
@@ -277,7 +271,6 @@ QtDesignerPlugin *QtDesignerDocument::designerPlugin()
 {
 	return m_designerPlugin;
 }
-
 
 bool QtDesignerDocument::closeDocument()
 {

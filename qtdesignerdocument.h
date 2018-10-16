@@ -29,7 +29,7 @@
 #include <QMimeType>
 namespace KDevelop
 {
-    class ICore;
+	class ICore;
 }
 
 class QtDesignerPlugin;
@@ -38,35 +38,36 @@ class QMdiArea;
 
 class QtDesignerDocument : public Sublime::UrlDocument, public KDevelop::IDocument
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    QtDesignerDocument( const QUrl&, KDevelop::ICore* );
+	QtDesignerDocument( const QUrl&, KDevelop::ICore* );
 
-    QUrl url() const { return Sublime::UrlDocument::url(); }
+	QUrl url() const override { return Sublime::UrlDocument::url(); }
 
-    QMimeType mimeType() const override;
-    KParts::Part* partForView(QWidget*) const override;
-    KTextEditor::Document* textDocument() const override;
-    bool save(KDevelop::IDocument::DocumentSaveMode = KDevelop::IDocument::Default) override;
-    void reload() override;
-    bool close(KDevelop::IDocument::DocumentSaveMode = KDevelop::IDocument::Default) override;
-    bool isActive() const override;
-    DocumentState state() const override;
-    void setCursorPosition(const KTextEditor::Cursor&) override;
-    void setTextSelection(const KTextEditor::Range &range) override;
-    void activate(Sublime::View*, KParts::MainWindow*) override;
-    KTextEditor::Cursor cursorPosition() const override;
-    void setDesignerPlugin(QtDesignerPlugin*);
-    QtDesignerPlugin* designerPlugin();
-    QDesignerFormWindowInterface* form();
-    virtual bool closeDocument();
+	QMimeType mimeType() const override;
+	KParts::Part* partForView(QWidget*) const override;
+	KTextEditor::Document* textDocument() const override;
+	bool save(KDevelop::IDocument::DocumentSaveMode = KDevelop::IDocument::Default) override;
+	void reload() override;
+	bool close(KDevelop::IDocument::DocumentSaveMode = KDevelop::IDocument::Default) override;
+	bool isActive() const override;
+	DocumentState state() const override;
+	void setCursorPosition(const KTextEditor::Cursor&) override;
+	void setTextSelection(const KTextEditor::Range &range) override;
+	void activate(Sublime::View*, KParts::MainWindow*) override;
+	KTextEditor::Cursor cursorPosition() const override;
+	void setDesignerPlugin(QtDesignerPlugin*);
+	QtDesignerPlugin* designerPlugin();
+	QDesignerFormWindowInterface* form();
+	virtual bool closeDocument();
 private slots:
-    void formChanged();
-    Sublime::View* newView( Sublime::Document* d );
+	void formChanged();
+//     Sublime::View* newView(Sublime::Document* d) override;
+
 private:
-    QtDesignerPlugin* m_designerPlugin;
-    KDevelop::IDocument::DocumentState m_state;
-    QDesignerFormWindowInterface* m_form;
+	QtDesignerPlugin* m_designerPlugin;
+	KDevelop::IDocument::DocumentState m_state;
+	QDesignerFormWindowInterface* m_form;
 };
 
 #endif

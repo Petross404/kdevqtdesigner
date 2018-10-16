@@ -40,7 +40,7 @@ namespace KDevelop
 
 template<class T> class QList;
 
-typedef QHash<QAction*, QAction*> DesignerActionHash;
+using DesignerActionHash = QHash<QAction*, QAction*>;
 
 
 /**
@@ -53,34 +53,32 @@ typedef QHash<QAction*, QAction*> DesignerActionHash;
  */
 class QtDesignerPlugin: public KDevelop::IPlugin
 {
-    Q_OBJECT
+        Q_OBJECT
 public:
-    QtDesignerPlugin(QObject* parent, const QVariantList& args = QVariantList());
-    virtual ~QtDesignerPlugin();
+        QtDesignerPlugin(QObject* parent, const QVariantList& args = QVariantList());
+        virtual ~QtDesignerPlugin();
 
 //   virtual bool openFile();
 //   virtual bool saveFile();
 
-    QDesignerFormEditorInterface *designer() const;
+        QDesignerFormEditorInterface *designer() const;
 public slots:
 //     void activateDocument( KDevelop::IDocument* );
 protected:
 
-private:
-
 private slots:
 //     void saveActiveDocument();
 private:
-    QDesignerIntegrationInterface* m_designer;
+        QDesignerIntegrationInterface* m_designer;
 
 //     KDevelop::IDocument* m_activeDoc;
-    QtDesignerDocumentFactory* m_docFactory;
-    QtDesignerToolViewFactory* m_widgetBoxFactory;
-    QtDesignerToolViewFactory* m_propertyEditorFactory;
-    QtDesignerToolViewFactory* m_objectInspectorFactory;
-    QtDesignerToolViewFactory* m_actionEditorFactory;
-    QtDesignerToolViewFactory*  m_signalSlotEditorFactory;
-    QtDesignerToolViewFactory*  m_resourceEditorFactory;
+        QtDesignerDocumentFactory* m_docFactory;
+        QtDesignerToolViewFactory* m_widgetBoxFactory;
+        QtDesignerToolViewFactory* m_propertyEditorFactory;
+        QtDesignerToolViewFactory* m_objectInspectorFactory;
+        QtDesignerToolViewFactory* m_actionEditorFactory;
+        QtDesignerToolViewFactory*  m_signalSlotEditorFactory;
+        QtDesignerToolViewFactory*  m_resourceEditorFactory;
 };
 
 #endif // QTDESIGNER_PART_H

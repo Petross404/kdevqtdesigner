@@ -97,17 +97,29 @@ public:
 	virtual QWidget *create(QWidget *parent = Q_NULLPTR)
 	{
 		if (m_type == WidgetBox)
+		{
 			return m_plugin->designer()->widgetBox();
+		}
 		else if (m_type == PropertyEditor)
+		{
 			return m_plugin->designer()->propertyEditor();
+		}
 		else if (m_type == ActionEditor)
+		{
 			return m_plugin->designer()->actionEditor();
+		}
 		else if (m_type == ObjectInspector)
+		{
 			return m_plugin->designer()->objectInspector();
+		}
 		else if (m_type == SignalSlotEditor)
+		{
 			return QDesignerComponents::createSignalSlotEditor(m_plugin->designer(), Q_NULLPTR);
+		}
 		else if (m_type == ResourceEditor)
+		{
 			return QDesignerComponents::createResourceEditor(m_plugin->designer(), Q_NULLPTR);
+		}
 
 		qDebug() << "Type not found:" << m_type;
 		return Q_NULLPTR;
@@ -115,17 +127,29 @@ public:
 	virtual Qt::DockWidgetArea defaultPosition()
 	{
 		if (m_type == WidgetBox)
+		{
 			return Qt::LeftDockWidgetArea;
+		}
 		else if (m_type == PropertyEditor)
+		{
 			return Qt::RightDockWidgetArea;
+		}
 		else if (m_type == ActionEditor)
+		{
 			return Qt::RightDockWidgetArea;
+		}
 		else if (m_type == ObjectInspector)
+		{
 			return Qt::RightDockWidgetArea;
+		}
 		else if (m_type == SignalSlotEditor)
+		{
 			return Qt::BottomDockWidgetArea;
+		}
 		else if (m_type == ResourceEditor)
+		{
 			return Qt::BottomDockWidgetArea;
+		}
 
 		qDebug() << "Type not found:" << m_type;
 		return Qt::TopDockWidgetArea;
@@ -134,17 +158,29 @@ public:
 	virtual QString id() const
 	{
 		if (m_type == WidgetBox)
+		{
 			return "org.kevelop.qtdesigner.WidgetBox";
+		}
 		else if (m_type == PropertyEditor)
+		{
 			return "org.kevelop.qtdesigner.PropertyEditor";
+		}
 		else if (m_type == ActionEditor)
+		{
 			return "org.kevelop.qtdesigner.ActionEditor";
+		}
 		else if (m_type == ObjectInspector)
+		{
 			return "org.kevelop.qtdesigner.ObjectInspector";
+		}
 		else if (m_type == SignalSlotEditor)
+		{
 			return "org.kevelop.qtdesigner.SignalSlotEditor";
+		}
 		else if (m_type == ResourceEditor)
+		{
 			return "org.kevelop.qtdesigner.ResourceEditor";
+		}
 
 		return QString();
 	}
@@ -155,7 +191,6 @@ private:
 };
 
 QtDesignerPlugin::QtDesignerPlugin(QObject *parent, const QVariantList &args)
-//	: KDevelop::IPlugin(QtDesignerPluginFactory::componentName(),parent),
 	: KDevelop::IPlugin(componentName(), parent),
 	  m_docFactory(new QtDesignerDocumentFactory(this)),
 	  m_widgetBoxFactory(Q_NULLPTR), m_propertyEditorFactory(Q_NULLPTR),

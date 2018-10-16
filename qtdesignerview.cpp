@@ -26,13 +26,11 @@
 #include "qtdesignerwidget.h"
 
 QtDesignerView::QtDesignerView(QtDesignerDocument *doc)
-	: Sublime::View(doc), m_widget(0)
+	: Sublime::View(doc), m_widget(Q_NULLPTR)
 {
 }
 
-QtDesignerView::~QtDesignerView()
-{
-}
+QtDesignerView::~QtDesignerView() = default;
 
 QWidget *QtDesignerView::createWidget(QWidget *parent)
 {
