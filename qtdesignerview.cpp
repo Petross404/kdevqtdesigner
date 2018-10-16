@@ -26,7 +26,7 @@
 #include "qtdesignerwidget.h"
 
 QtDesignerView::QtDesignerView(QtDesignerDocument *doc)
-    : Sublime::View(doc), m_widget(0)
+	: Sublime::View(doc), m_widget(0)
 {
 }
 
@@ -36,9 +36,9 @@ QtDesignerView::~QtDesignerView()
 
 QWidget *QtDesignerView::createWidget(QWidget *parent)
 {
-    return new QtDesignerWidget(parent, qobject_cast<QtDesignerDocument *> (document()));
+	return new QtDesignerWidget(parent, qobject_cast<QtDesignerDocument *> (document()));
 }
 
 #include "qtdesignerview.moc"
 
-// kate: indent-mode cstyle; indent-width 4; replace-tabs on; 
+// kate: indent-mode cstyle; indent-width 8; replace-tabs off; tab-width 8; 

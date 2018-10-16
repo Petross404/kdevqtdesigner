@@ -44,127 +44,137 @@
 #include "qtdesignerdocument.h"
 #include "qtdesignerplugin.h"
 
-QtDesignerWidget::QtDesignerWidget( QWidget* parent, QtDesignerDocument* document )
-    : QMdiArea( parent ), KXMLGUIClient(), m_document( document )
+QtDesignerWidget::QtDesignerWidget(QWidget *parent, QtDesignerDocument *document)
+	: QMdiArea(parent), KXMLGUIClient(), m_document(document)
 {
-    //     area->setScrollBarsEnabled( true ); //FIXME commented just to make it compile with the new qt-copy
-    //     area->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
-    //     area->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
+	//     area->setScrollBarsEnabled( true ); //FIXME commented just to make it compile with the new qt-copy
+	//     area->setVerticalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
+	//     area->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOn );
 
-    QDesignerFormWindowInterface* form = m_document->form();
+	QDesignerFormWindowInterface *form = m_document->form();
 
-    setComponentName( m_document->designerPlugin()->componentName(), "");
-    setXMLFile( "kdevqtdesigner.rc" );
+	setComponentName(m_document->designerPlugin()->componentName(), "");
+	setXMLFile("kdevqtdesigner.rc");
 
-    QMdiSubWindow* window = addSubWindow(form, Qt::Window | Qt::WindowShadeButtonHint | Qt::WindowSystemMenuHint | Qt::WindowTitleHint);
-    const QSize containerSize = form->mainContainer()->size();
-    const QSize containerMinimumSize = form->mainContainer()->minimumSize();
-    const QSize containerMaximumSize = form->mainContainer()->maximumSize();
-    const QSize decorationSize = window->geometry().size() - window->contentsRect().size();
-    window->resize(containerSize+decorationSize);
-    window->setMinimumSize(containerMinimumSize+decorationSize);
-    if( containerMaximumSize == QSize(QWIDGETSIZE_MAX,QWIDGETSIZE_MAX) )
-        window->setMaximumSize(containerMaximumSize);
-    else
-        window->setMaximumSize(containerMaximumSize+decorationSize);
-    window->setWindowTitle( form->mainContainer()->windowTitle() );
+	QMdiSubWindow *window = addSubWindow(form, Qt::Window | Qt::WindowShadeButtonHint | Qt::WindowSystemMenuHint | Qt::WindowTitleHint);
+	const QSize containerSize = form->mainContainer()->size();
+	const QSize containerMinimumSize = form->mainContainer()->minimumSize();
+	const QSize containerMaximumSize = form->mainContainer()->maximumSize();
+	const QSize decorationSize = window->geometry().size() - window->contentsRect().size();
+	window->resize(containerSize + decorationSize);
+	window->setMinimumSize(containerMinimumSize + decorationSize);
 
-    setupActions();
+	if (containerMaximumSize == QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX))
+		window->setMaximumSize(containerMaximumSize);
+	else
+		window->setMaximumSize(containerMaximumSize + decorationSize);
+
+	window->setWindowTitle(form->mainContainer()->windowTitle());
+
+	setupActions();
 }
 
 void QtDesignerWidget::setupActions()
 {
 
-    QDesignerFormWindowManagerInterface* manager = m_document->form()->core()->formWindowManager();
-    KActionCollection* ac = actionCollection();
+	QDesignerFormWindowManagerInterface *manager = m_document->form()->core()->formWindowManager();
+	KActionCollection *ac = actionCollection();
 
-    KStandardAction::save( this, SLOT( save() ), ac);
-    ac->addAction( "adjust_size", manager->actionAdjustSize() );
-    ac->addAction( "break_layout", manager->actionBreakLayout() );
-    ac->addAction( "designer_cut", manager->actionCut() );
-    ac->addAction( "designer_copy", manager->actionCopy() );
-    ac->addAction( "designer_paste", manager->actionPaste() );
-    ac->addAction( "designer_delete", manager->actionDelete() );
-    ac->addAction( "layout_grid", manager->actionGridLayout() );
-    ac->addAction( "layout_horiz", manager->actionHorizontalLayout() );
-    ac->addAction( "layout_vertical", manager->actionVerticalLayout() );
-    ac->addAction( "layout_split_horiz", manager->actionSplitHorizontal() );
-    ac->addAction( "layout_split_vert", manager->actionSplitVertical() );
-    ac->addAction( "designer_undo", manager->actionUndo() );
-    ac->addAction( "designer_redo", manager->actionRedo() );
-    ac->addAction( "designer_select_all", manager->actionSelectAll() );
-    QAction* action = ac->addAction( "widgeteditor" );
-    action->setCheckable( true );
-    action->setChecked( true );
-    action->setText( tr("Edit Widgets") );
-    connect( action, SIGNAL(triggered()), SLOT(editWidgets()));
-    foreach (QObject *plugin, QPluginLoader::staticInstances())
-    {
-        if ( !plugin )
-            continue;
+	KStandardAction::save(this, SLOT(save()), ac);
+	ac->addAction("adjust_size", manager->actionAdjustSize());
+	ac->addAction("break_layout", manager->actionBreakLayout());
+	ac->addAction("designer_cut", manager->actionCut());
+	ac->addAction("designer_copy", manager->actionCopy());
+	ac->addAction("designer_paste", manager->actionPaste());
+	ac->addAction("designer_delete", manager->actionDelete());
+	ac->addAction("layout_grid", manager->actionGridLayout());
+	ac->addAction("layout_horiz", manager->actionHorizontalLayout());
+	ac->addAction("layout_vertical", manager->actionVerticalLayout());
+	ac->addAction("layout_split_horiz", manager->actionSplitHorizontal());
+	ac->addAction("layout_split_vert", manager->actionSplitVertical());
+	ac->addAction("designer_undo", manager->actionUndo());
+	ac->addAction("designer_redo", manager->actionRedo());
+	ac->addAction("designer_select_all", manager->actionSelectAll());
+	QAction *action = ac->addAction("widgeteditor");
+	action->setCheckable(true);
+	action->setChecked(true);
+	action->setText(tr("Edit Widgets"));
+	connect(action, SIGNAL(triggered()), SLOT(editWidgets()));
 
-        qDebug() << "checking plugin:" << plugin;
-        QDesignerFormEditorPluginInterface *fep;
+	foreach (QObject *plugin, QPluginLoader::staticInstances())
+	{
+		if (!plugin)
+			continue;
 
-        if ( (fep = qobject_cast<QDesignerFormEditorPluginInterface*>(plugin)) )
-        {
-            // action name may have '&', remove them
-            QString actionText = fep->action()->text();
-            actionText = actionText.remove('&');
+		qDebug() << "checking plugin:" << plugin;
+		QDesignerFormEditorPluginInterface *fep;
 
-            fep->action()->setCheckable(true);
-            if( actionText == "Edit Signals/Slots" ) {
-                connect(fep->action(), SIGNAL(triggered()), SLOT(editSignals()));
-                actionCollection()->addAction("signaleditor", fep->action());
-            }
-            if( actionText == "Edit Buddies" ) {
-                connect(fep->action(), SIGNAL(triggered()), SLOT(editBuddys()));
-                actionCollection()->addAction("buddyeditor", fep->action());
-            }
-            if( actionText == "Edit Tab Order" ) {
-                connect(fep->action(), SIGNAL(triggered()), SLOT(editTabOrder()));
-                actionCollection()->addAction("tabordereditor", fep->action());
-            }
+		if ((fep = qobject_cast<QDesignerFormEditorPluginInterface *>(plugin)))
+		{
+			// action name may have '&', remove them
+			QString actionText = fep->action()->text();
+			actionText = actionText.remove('&');
 
-            qDebug() << "Added action:" << fep->action()->objectName() << "|" << fep->action()->text();
-        }
-    }
+			fep->action()->setCheckable(true);
+
+			if (actionText == "Edit Signals/Slots")
+			{
+				connect(fep->action(), SIGNAL(triggered()), SLOT(editSignals()));
+				actionCollection()->addAction("signaleditor", fep->action());
+			}
+
+			if (actionText == "Edit Buddies")
+			{
+				connect(fep->action(), SIGNAL(triggered()), SLOT(editBuddys()));
+				actionCollection()->addAction("buddyeditor", fep->action());
+			}
+
+			if (actionText == "Edit Tab Order")
+			{
+				connect(fep->action(), SIGNAL(triggered()), SLOT(editTabOrder()));
+				actionCollection()->addAction("tabordereditor", fep->action());
+			}
+
+			qDebug() << "Added action:" << fep->action()->objectName() << "|" << fep->action()->text();
+		}
+	}
 }
 
 void QtDesignerWidget::editWidgets()
 {
-    QDesignerFormWindowInterface* form = m_document->form();
-    form->editWidgets();
-    actionCollection()->action("signaleditor")->setChecked(false);
-    actionCollection()->action("buddyeditor")->setChecked(false);
-    actionCollection()->action("tabordereditor")->setChecked(false);
+	QDesignerFormWindowInterface *form = m_document->form();
+	form->editWidgets();
+	actionCollection()->action("signaleditor")->setChecked(false);
+	actionCollection()->action("buddyeditor")->setChecked(false);
+	actionCollection()->action("tabordereditor")->setChecked(false);
 }
 
 void QtDesignerWidget::editBuddys()
 {
-    actionCollection()->action("widgeteditor")->setChecked(false);
-    actionCollection()->action("signaleditor")->setChecked(false);
-    actionCollection()->action("tabordereditor")->setChecked(false);
+	actionCollection()->action("widgeteditor")->setChecked(false);
+	actionCollection()->action("signaleditor")->setChecked(false);
+	actionCollection()->action("tabordereditor")->setChecked(false);
 }
 
 void QtDesignerWidget::editSignals()
 {
-    actionCollection()->action("widgeteditor")->setChecked(false);
-    actionCollection()->action("buddyeditor")->setChecked(false);
-    actionCollection()->action("tabordereditor")->setChecked(false);
+	actionCollection()->action("widgeteditor")->setChecked(false);
+	actionCollection()->action("buddyeditor")->setChecked(false);
+	actionCollection()->action("tabordereditor")->setChecked(false);
 }
 
 void QtDesignerWidget::editTabOrder()
 {
-    actionCollection()->action("widgeteditor")->setChecked(false);
-    actionCollection()->action("buddyeditor")->setChecked(false);
-    actionCollection()->action("signaleditor")->setChecked(false);
+	actionCollection()->action("widgeteditor")->setChecked(false);
+	actionCollection()->action("buddyeditor")->setChecked(false);
+	actionCollection()->action("signaleditor")->setChecked(false);
 }
 
 void QtDesignerWidget::save()
 {
-    m_document->save();
+	m_document->save();
 }
 
 #include "qtdesignerwidget.moc"
 
+// kate: indent-mode cstyle; indent-width 8; replace-tabs off; tab-width 8; 
