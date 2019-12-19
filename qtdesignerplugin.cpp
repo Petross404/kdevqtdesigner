@@ -43,10 +43,9 @@
 #include <interfaces/idocumentcontroller.h>
 #include <interfaces/iuicontroller.h>
 #include "qtdesignerdocument.h"
-#include "internals/qdesigner_integration_p.h"
+#include "integration.h"
 
-K_PLUGIN_FACTORY(QtDesignerPluginFactory, registerPlugin<QtDesignerPlugin>();)
-K_EXPORT_PLUGIN(QtDesignerPluginFactory(KAboutData("kdevqtdesigner", "kdevqtdesigner", ki18n("Qt Designer"), "0.1", ki18n("A GUI form designer for the Qt toolkit"), KAboutData::License_GPL)))
+K_PLUGIN_FACTORY_WITH_JSON (QtDesignerPluginFactory, "kdevqtdesigner.json", registerPlugin <QtDesignerPlugin>(); )
 
 class QtDesignerDocumentFactory : public KDevelop::IDocumentFactory
 {
@@ -191,12 +190,15 @@ private:
 };
 
 QtDesignerPlugin::QtDesignerPlugin(QObject *parent, const QVariantList &args)
-	: KDevelop::IPlugin(componentName(), parent),
+	: KDevelop::IPlugin("kdevqtdesigner" /*componentName()*/, parent),
 	  m_docFactory(new QtDesignerDocumentFactory(this)),
 	  m_widgetBoxFactory(Q_NULLPTR), m_propertyEditorFactory(Q_NULLPTR),
 	  m_objectInspectorFactory(Q_NULLPTR), m_actionEditorFactory(Q_NULLPTR)
 {
 	Q_UNUSED(args)
+
+        setXMLFile ("kdevqtdesigner.rc");
+
 	QDesignerComponents::initializeResources();
 //     connect( idc, SIGNAL( documentActivated( KDevelop::IDocument* ) ),
 //              this, SLOT( activateDocument( KDevelop::IDocument* ) ) );
@@ -219,9 +221,8 @@ QtDesignerPlugin::QtDesignerPlugin(QObject *parent, const QVariantList &args)
 	formeditor->setActionEditor(QDesignerComponents::createActionEditor(formeditor, Q_NULLPTR));
 	formeditor->setObjectInspector(QDesignerComponents::createObjectInspector(formeditor, Q_NULLPTR));
 
-	m_designer = new QDesignerIntegration(formeditor, this);
-	//m_designer = new qdesigner_internal::QDesignerIntegration( formeditor, this );
-	qdesigner_internal::QDesignerIntegration::initializePlugins(formeditor);
+	m_designer = new LocalDesignerIntegration(formeditor, this);
+	QDesignerIntegration::initializePlugins(formeditor);
 
 	qDebug() << "integration now:" << formeditor->integration();
 

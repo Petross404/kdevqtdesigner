@@ -59,10 +59,10 @@ public:
 	void setDesignerPlugin(QtDesignerPlugin*);
 	QtDesignerPlugin* designerPlugin();
 	QDesignerFormWindowInterface* form();
-	virtual bool closeDocument();
+	virtual bool closeDocument(bool silent) override;
 private slots:
 	void formChanged();
-//     Sublime::View* newView(Sublime::Document* d) override;
+        Sublime::View* newView(Sublime::Document* d) override;
 
 private:
 	QtDesignerPlugin* m_designerPlugin;

@@ -249,7 +249,22 @@ void QtDesignerDocument::setDesignerPlugin(QtDesignerPlugin *plugin)
 	m_designerPlugin = plugin;
 }
 
+Sublime::View *QtDesignerDocument::newView(Sublime::Document* doc)
+{
+    if( qobject_cast<QtDesignerDocument*>( doc ) ) {
+        QFile uiFile(url().toLocalFile());
+        uiFile.open(QIODevice::ReadOnly | QIODevice::Text);
 
+        m_form = designerPlugin()->designer()->formWindowManager()->createFormWindow();
+        qDebug() << "now we have" << m_form->core()->formWindowManager()->formWindowCount() << "formwindows";
+        m_form->setFileName(url().toLocalFile());
+        m_form->setContents(&uiFile);
+        connect( m_form, SIGNAL(changed()), this, SLOT(formChanged()));
+        designerPlugin()->designer()->formWindowManager()->setActiveFormWindow(m_form);
+        return new QtDesignerView( this );
+    }
+    return 0;
+}
 
 QDesignerFormWindowInterface *QtDesignerDocument::form()
 {
@@ -272,7 +287,7 @@ QtDesignerPlugin *QtDesignerDocument::designerPlugin()
 	return m_designerPlugin;
 }
 
-bool QtDesignerDocument::closeDocument()
+bool QtDesignerDocument::closeDocument(bool silent)
 {
 	return close();
 }

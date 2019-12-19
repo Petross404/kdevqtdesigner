@@ -9,7 +9,7 @@
         ],
         "Category": "Utilities",
         "Description": "Enables viewing and editing of the .ui files",
-        "Description[gr]": "Προβάλει και επεξεργάζεται αρχεία .ui"
+        "Description[gr]": "Προβάλει και επεξεργάζεται αρχεία .ui",
         "Icon": "designer",
         "Id": "kdevqtdesigner",
         "License": "GPL",
