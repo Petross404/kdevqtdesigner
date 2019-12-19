@@ -268,6 +268,8 @@ QtDesignerPlugin::QtDesignerPlugin(QObject *parent, const QVariantList &args)
 
 QtDesignerPlugin::~QtDesignerPlugin()
 {
+	m_formeditor->setParent(Q_NULLPTR); // ugly, but otherwise segmentation fault occurs
+	// delete m_formeditor;
 	delete m_designer;
 	delete m_docFactory;
 }
