@@ -43,10 +43,9 @@
 #include <interfaces/idocumentcontroller.h>
 #include <interfaces/iuicontroller.h>
 #include "qtdesignerdocument.h"
-#include "internals/qdesigner_integration_p.h"
+#include "integration.h"
 
-K_PLUGIN_FACTORY(QtDesignerPluginFactory, registerPlugin<QtDesignerPlugin>();)
-K_EXPORT_PLUGIN(QtDesignerPluginFactory(KAboutData("kdevqtdesigner", "kdevqtdesigner", ki18n("Qt Designer"), "0.1", ki18n("A GUI form designer for the Qt toolkit"), KAboutData::License_GPL)))
+K_PLUGIN_FACTORY_WITH_JSON (QtDesignerPluginFactory, "kdevqtdesigner.json", registerPlugin <QtDesignerPlugin>(); )
 
 class QtDesignerDocumentFactory : public KDevelop::IDocumentFactory
 {
@@ -191,39 +190,41 @@ private:
 };
 
 QtDesignerPlugin::QtDesignerPlugin(QObject *parent, const QVariantList &args)
-	: KDevelop::IPlugin(componentName(), parent),
+	: KDevelop::IPlugin("kdevqtdesigner" /*componentName()*/, parent),
 	  m_docFactory(new QtDesignerDocumentFactory(this)),
 	  m_widgetBoxFactory(Q_NULLPTR), m_propertyEditorFactory(Q_NULLPTR),
 	  m_objectInspectorFactory(Q_NULLPTR), m_actionEditorFactory(Q_NULLPTR)
 {
 	Q_UNUSED(args)
+
+        setXMLFile ("kdevqtdesigner.rc");
+
 	QDesignerComponents::initializeResources();
 //     connect( idc, SIGNAL( documentActivated( KDevelop::IDocument* ) ),
 //              this, SLOT( activateDocument( KDevelop::IDocument* ) ) );
 
-	QDesignerFormEditorInterface *formeditor = QDesignerComponents::createFormEditor(this);
-	QDesignerComponents::initializePlugins(formeditor);
+	m_formeditor = QDesignerComponents::createFormEditor(this);
+	QDesignerComponents::initializePlugins(m_formeditor);
 
-	qDebug() << "integration:" << formeditor->integration();
+	qDebug() << "integration:" << m_formeditor->integration();
 
 	//TODO apaku: if multiple mainwindows exist, this needs to be changed on mainwindow-change
-	formeditor->setTopLevel(core()->uiController()->activeMainWindow());
+	m_formeditor->setTopLevel(core()->uiController()->activeMainWindow());
 
-	formeditor->setWidgetBox(QDesignerComponents::createWidgetBox(formeditor, Q_NULLPTR));
+	m_formeditor->setWidgetBox(QDesignerComponents::createWidgetBox(m_formeditor, Q_NULLPTR));
 
 //    load the standard widgets
-	formeditor->widgetBox()->setFileName(QLatin1String(":/trolltech/widgetbox/widgetbox.xml"));
-	formeditor->widgetBox()->load();
+	m_formeditor->widgetBox()->setFileName(QLatin1String(":/trolltech/widgetbox/widgetbox.xml"));
+	m_formeditor->widgetBox()->load();
 
-	formeditor->setPropertyEditor(QDesignerComponents::createPropertyEditor(formeditor, Q_NULLPTR));
-	formeditor->setActionEditor(QDesignerComponents::createActionEditor(formeditor, Q_NULLPTR));
-	formeditor->setObjectInspector(QDesignerComponents::createObjectInspector(formeditor, Q_NULLPTR));
+	m_formeditor->setPropertyEditor(QDesignerComponents::createPropertyEditor(m_formeditor, Q_NULLPTR));
+	m_formeditor->setActionEditor(QDesignerComponents::createActionEditor(m_formeditor, Q_NULLPTR));
+	m_formeditor->setObjectInspector(QDesignerComponents::createObjectInspector(m_formeditor, Q_NULLPTR));
 
-	m_designer = new QDesignerIntegration(formeditor, this);
-	//m_designer = new qdesigner_internal::QDesignerIntegration( formeditor, this );
-	qdesigner_internal::QDesignerIntegration::initializePlugins(formeditor);
+	m_designer = new LocalDesignerIntegration(m_formeditor, this);
+	QDesignerIntegration::initializePlugins(m_formeditor);
 
-	qDebug() << "integration now:" << formeditor->integration();
+	qDebug() << "integration now:" << m_formeditor->integration();
 
 	m_designer->core()->widgetBox()->setObjectName(tr("Widget Box"));
 	m_designer->core()->propertyEditor()->setObjectName(tr("Property Editor"));
@@ -267,6 +268,8 @@ QtDesignerPlugin::QtDesignerPlugin(QObject *parent, const QVariantList &args)
 
 QtDesignerPlugin::~QtDesignerPlugin()
 {
+	m_formeditor->setParent(Q_NULLPTR); // ugly, but otherwise segmentation fault occurs
+	// delete m_formeditor;
 	delete m_designer;
 	delete m_docFactory;
 }

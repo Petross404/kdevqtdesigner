@@ -4,7 +4,7 @@ project(kdevqtdesigner)
 find_package(ECM REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${CMAKE_MODULE_PATH} )
 
-set(MIN_KDEV_VERSION "5.2.80")
+set(MIN_KDEV_VERSION "5.1.0")
 set(MIN_QT_VER "5.5.0")
 set(MIN_KF_VER "5.20.0")
 
@@ -40,6 +40,7 @@ SET(kdevqtdesigner_PART_SRCS
     qtdesignerdocument.cpp
     qtdesignerview.cpp
     qtdesignerwidget.cpp
+    integration.cpp
 )
 
 qt5_add_resources(kdevqtdesigner_PART_SRCS kdevqtdesigner.qrc)
@@ -47,6 +48,8 @@ kdevplatform_add_plugin(kdevqtdesigner
 	JSON kdevqtdesigner.json SOURCES
 	${kdevqtdesigner_PART_SRCS}
 )
+
+set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}" "-Wl,--no-undefined" )
 
 #TARGET_LINK_LIBRARIES(kdevqtdesigner ${KDE4_KDEUI_LIBS} ${KDE4_KTEXTEDITOR_LIBS} 
 #${KDEVPLATFORM_INTERFACES_LIBRARIES} ${QT_QTDESIGNER_LIBRARY} ${QT_QTDESIGNERCOMPONENTS_LIBRARY} 
@@ -62,11 +65,6 @@ target_link_libraries(kdevqtdesigner
     KF5::TextWidgets
     Qt5::UiPlugin
     Qt5::Designer
+    Qt5DesignerComponents
     )
-install(TARGETS kdevqtdesigner DESTINATION ${PLUGIN_INSTALL_DIR})
 
-
-########### install files ###############
-
-install(FILES kdevqtdesigner.desktop DESTINATION  ${SERVICES_INSTALL_DIR} )
-install(FILES kdevqtdesigner.rc DESTINATION  ${DATA_INSTALL_DIR}/kdevqtdesigner )
