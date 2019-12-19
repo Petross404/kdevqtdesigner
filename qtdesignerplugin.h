@@ -69,6 +69,7 @@ protected:
 private slots:
 //     void saveActiveDocument();
 private:
+        QDesignerFormEditorInterface* m_formeditor;
         QDesignerIntegrationInterface* m_designer;
 
 //     KDevelop::IDocument* m_activeDoc;

@@ -203,28 +203,28 @@ QtDesignerPlugin::QtDesignerPlugin(QObject *parent, const QVariantList &args)
 //     connect( idc, SIGNAL( documentActivated( KDevelop::IDocument* ) ),
 //              this, SLOT( activateDocument( KDevelop::IDocument* ) ) );
 
-	QDesignerFormEditorInterface *formeditor = QDesignerComponents::createFormEditor(this);
-	QDesignerComponents::initializePlugins(formeditor);
+	m_formeditor = QDesignerComponents::createFormEditor(this);
+	QDesignerComponents::initializePlugins(m_formeditor);
 
-	qDebug() << "integration:" << formeditor->integration();
+	qDebug() << "integration:" << m_formeditor->integration();
 
 	//TODO apaku: if multiple mainwindows exist, this needs to be changed on mainwindow-change
-	formeditor->setTopLevel(core()->uiController()->activeMainWindow());
+	m_formeditor->setTopLevel(core()->uiController()->activeMainWindow());
 
-	formeditor->setWidgetBox(QDesignerComponents::createWidgetBox(formeditor, Q_NULLPTR));
+	m_formeditor->setWidgetBox(QDesignerComponents::createWidgetBox(m_formeditor, Q_NULLPTR));
 
 //    load the standard widgets
-	formeditor->widgetBox()->setFileName(QLatin1String(":/trolltech/widgetbox/widgetbox.xml"));
-	formeditor->widgetBox()->load();
+	m_formeditor->widgetBox()->setFileName(QLatin1String(":/trolltech/widgetbox/widgetbox.xml"));
+	m_formeditor->widgetBox()->load();
 
-	formeditor->setPropertyEditor(QDesignerComponents::createPropertyEditor(formeditor, Q_NULLPTR));
-	formeditor->setActionEditor(QDesignerComponents::createActionEditor(formeditor, Q_NULLPTR));
-	formeditor->setObjectInspector(QDesignerComponents::createObjectInspector(formeditor, Q_NULLPTR));
+	m_formeditor->setPropertyEditor(QDesignerComponents::createPropertyEditor(m_formeditor, Q_NULLPTR));
+	m_formeditor->setActionEditor(QDesignerComponents::createActionEditor(m_formeditor, Q_NULLPTR));
+	m_formeditor->setObjectInspector(QDesignerComponents::createObjectInspector(m_formeditor, Q_NULLPTR));
 
-	m_designer = new LocalDesignerIntegration(formeditor, this);
-	QDesignerIntegration::initializePlugins(formeditor);
+	m_designer = new LocalDesignerIntegration(m_formeditor, this);
+	QDesignerIntegration::initializePlugins(m_formeditor);
 
-	qDebug() << "integration now:" << formeditor->integration();
+	qDebug() << "integration now:" << m_formeditor->integration();
 
 	m_designer->core()->widgetBox()->setObjectName(tr("Widget Box"));
 	m_designer->core()->propertyEditor()->setObjectName(tr("Property Editor"));
