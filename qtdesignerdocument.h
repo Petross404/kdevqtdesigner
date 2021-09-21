@@ -26,7 +26,7 @@
 
 #include <sublime/urldocument.h>
 #include <interfaces/idocument.h>
-#include <QSharedPointer>
+#include <QMimeType>
 namespace KDevelop
 {
     class ICore;
@@ -42,28 +42,28 @@ class QtDesignerDocument : public Sublime::UrlDocument, public KDevelop::IDocume
 public:
     QtDesignerDocument( const QUrl&, KDevelop::ICore* );
 
-    QUrl url() const { return Sublime::UrlDocument::url(); }
+    QUrl url() const override { return Sublime::UrlDocument::url(); }
 
+    QMimeType mimeType() const override;
     //virtual QSharedPointer<QMimeType> mimeType() const;
-    virtual QMimeType mimeType() const;
-    virtual KParts::Part* partForView(QWidget*) const;
-    virtual KTextEditor::Document* textDocument() const;
-    virtual bool save(KDevelop::IDocument::DocumentSaveMode = KDevelop::IDocument::Default);
-    virtual void reload();
-    virtual bool close(KDevelop::IDocument::DocumentSaveMode = KDevelop::IDocument::Default);
-    virtual bool isActive() const;
-    virtual DocumentState state() const;
-    virtual void setCursorPosition(const KTextEditor::Cursor&);
-    virtual void setTextSelection(const KTextEditor::Range &range);
-    virtual void activate(Sublime::View*, KParts::MainWindow*);
-    virtual KTextEditor::Cursor cursorPosition() const;
+    KParts::Part* partForView(QWidget*) const override;
+    KTextEditor::Document* textDocument() const override;
+    bool save(KDevelop::IDocument::DocumentSaveMode = KDevelop::IDocument::Default) override;
+    void reload() override;
+    bool close(KDevelop::IDocument::DocumentSaveMode = KDevelop::IDocument::Default) override;
+    bool isActive() const override;
+    virtual DocumentState state() const override;
+    virtual void setCursorPosition(const KTextEditor::Cursor&) override;
+    virtual void setTextSelection(const KTextEditor::Range &range) override;
+    virtual void activate(Sublime::View*, KParts::MainWindow*) override;
+    virtual KTextEditor::Cursor cursorPosition() const override;
     void setDesignerPlugin(QtDesignerPlugin*);
     QtDesignerPlugin* designerPlugin();
     QDesignerFormWindowInterface* form();
     virtual bool closeDocument();
 private slots:
     void formChanged();
-    Sublime::View* newView( Sublime::Document* d );
+    Sublime::View* newView( Sublime::Document* d ) override;
 private:
     QtDesignerPlugin* m_designerPlugin;
     KDevelop::IDocument::DocumentState m_state;

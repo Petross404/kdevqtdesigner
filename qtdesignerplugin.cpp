@@ -56,7 +56,7 @@ public:
     {
     }
 
-    KDevelop::IDocument* create( const QUrl& url, KDevelop::ICore* core)
+    KDevelop::IDocument* create( const QUrl& url, KDevelop::ICore* core) override
     {
 		QMimeDatabase db;
         qDebug() << "creating doc for designer?";
@@ -78,7 +78,7 @@ public:
 class QtDesignerToolViewFactory : public KDevelop::IToolViewFactory
 {
 public:
-    enum Type
+    enum class Type
     {
         WidgetBox,
         PropertyEditor,
@@ -92,54 +92,55 @@ public:
     {
     }
 
-    virtual QWidget* create(QWidget *parent = 0)
+    QWidget* create(QWidget *parent = 0) override
     {
-        if( m_type == WidgetBox )
+        if( m_type == Type::WidgetBox )
             return m_plugin->designer()->widgetBox();
-        else if( m_type == PropertyEditor )
+        else if( m_type == Type::PropertyEditor )
             return m_plugin->designer()->propertyEditor();
-        else if( m_type == ActionEditor )
+        else if( m_type == Type::ActionEditor )
             return m_plugin->designer()->actionEditor();
-        else if( m_type == ObjectInspector )
+        else if( m_type == Type::ObjectInspector )
             return m_plugin->designer()->objectInspector();
-        else if( m_type == SignalSlotEditor )
+        else if( m_type == Type::SignalSlotEditor )
             return QDesignerComponents::createSignalSlotEditor(m_plugin->designer(), 0);
-        else if( m_type == ResourceEditor )
+        else if( m_type == Type::ResourceEditor )
             return QDesignerComponents::createResourceEditor(m_plugin->designer(), 0);
-        qDebug() << "Type not found:" << m_type;
+        qDebug() << "Type not found:";
         return 0;
     }
-    virtual Qt::DockWidgetArea defaultPosition()
+
+    Qt::DockWidgetArea defaultPosition() const override
     {
-        if( m_type == WidgetBox )
+        if( m_type == Type::WidgetBox )
             return Qt::LeftDockWidgetArea;
-        else if( m_type == PropertyEditor )
+        else if( m_type == Type::PropertyEditor )
             return Qt::RightDockWidgetArea;
-        else if( m_type == ActionEditor )
+        else if( m_type == Type::ActionEditor )
             return Qt::RightDockWidgetArea;
-        else if( m_type == ObjectInspector )
+        else if( m_type == Type::ObjectInspector )
             return Qt::RightDockWidgetArea;
-        else if( m_type == SignalSlotEditor )
+        else if( m_type == Type::SignalSlotEditor )
             return Qt::BottomDockWidgetArea;
-        else if( m_type == ResourceEditor )
+        else if( m_type == Type::ResourceEditor )
             return Qt::BottomDockWidgetArea;
-        qDebug() << "Type not found:" << m_type;
+        qDebug() << "Type not found";
         return Qt::TopDockWidgetArea;
     }
 
-    virtual QString id() const
+    virtual QString id() const override
     {
-        if( m_type == WidgetBox )
+        if( m_type == Type::WidgetBox )
             return "org.kevelop.qtdesigner.WidgetBox";
-        else if( m_type == PropertyEditor )
+        else if( m_type == Type::PropertyEditor )
             return "org.kevelop.qtdesigner.PropertyEditor";
-        else if( m_type == ActionEditor )
+        else if( m_type == Type::ActionEditor )
             return "org.kevelop.qtdesigner.ActionEditor";
-        else if( m_type == ObjectInspector )
+        else if( m_type == Type::ObjectInspector )
             return "org.kevelop.qtdesigner.ObjectInspector";
-        else if( m_type == SignalSlotEditor )
+        else if( m_type == Type::SignalSlotEditor )
             return "org.kevelop.qtdesigner.SignalSlotEditor";
-        else if( m_type == ResourceEditor )
+        else if( m_type == Type::ResourceEditor )
             return "org.kevelop.qtdesigner.ResourceEditor";
         return QString();
     }
@@ -181,7 +182,7 @@ QtDesignerPlugin::QtDesignerPlugin(QObject *parent, const QVariantList &args)
 
     m_designer = new QDesignerIntegration(formeditor, this);
     //m_designer = new qdesigner_internal::QDesignerIntegration( formeditor, this );
-    qdesigner_internal::QDesignerIntegration::initializePlugins( formeditor );
+    //qdesigner_internal::QDesignerIntegration::initializePlugins( formeditor );
 
     qDebug() << "integration now:" << formeditor->integration();
 
@@ -200,18 +201,18 @@ QtDesignerPlugin::QtDesignerPlugin(QObject *parent, const QVariantList &args)
             fep->initialize(designer());
         }
     }
-    m_widgetBoxFactory = new QtDesignerToolViewFactory( this,
-            QtDesignerToolViewFactory::WidgetBox );
+
+    m_widgetBoxFactory = new QtDesignerToolViewFactory{this, QtDesignerToolViewFactory::Type::WidgetBox};
     m_propertyEditorFactory = new QtDesignerToolViewFactory( this,
-            QtDesignerToolViewFactory::PropertyEditor);
+            QtDesignerToolViewFactory::Type::PropertyEditor);
     m_actionEditorFactory = new QtDesignerToolViewFactory( this,
-            QtDesignerToolViewFactory::ActionEditor);
+            QtDesignerToolViewFactory::Type::ActionEditor);
     m_objectInspectorFactory = new QtDesignerToolViewFactory( this,
-            QtDesignerToolViewFactory::ObjectInspector);
+            QtDesignerToolViewFactory::Type::ObjectInspector);
     m_signalSlotEditorFactory = new QtDesignerToolViewFactory( this,
-            QtDesignerToolViewFactory::SignalSlotEditor);
+            QtDesignerToolViewFactory::Type::SignalSlotEditor);
     m_resourceEditorFactory = new QtDesignerToolViewFactory( this,
-            QtDesignerToolViewFactory::ResourceEditor);
+            QtDesignerToolViewFactory::Type::ResourceEditor);
 
     core()->uiController()->addToolView("Widget Box", m_widgetBoxFactory );
     core()->uiController()->addToolView("Property Editor", m_propertyEditorFactory );

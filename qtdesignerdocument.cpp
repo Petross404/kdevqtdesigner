@@ -49,9 +49,9 @@
 #include <QMdiSubWindow>
 #include <QtCore/QFile>
 #include <QApplication>
-#include <KMessageBox>
 #include <QLocale>
 #include <QDebug>
+#include <QMessageBox>
 
 #include <interfaces/icore.h>
 #include <interfaces/iuicontroller.h>
@@ -62,6 +62,7 @@
 
 #include "qtdesignerview.h"
 #include "qtdesignerplugin.h"
+#include <qmimedatabase.h>
 
 QtDesignerDocument::QtDesignerDocument( const QUrl& url , KDevelop::ICore* core )
     : Sublime::UrlDocument(core->uiController()->controller(), url),
@@ -70,10 +71,17 @@ QtDesignerDocument::QtDesignerDocument( const QUrl& url , KDevelop::ICore* core 
 
 }
 
+/*QMimeType QtDesignerDocument::mimeType() const
+{
+    //return QMimeType::mimeType("application/x-designer");
+}*/
+
 QMimeType QtDesignerDocument::mimeType() const
 {
-    return QMimeType::mimeType("application/x-designer");
+	QMimeDatabase db;
+	return db.mimeTypeForName("application/x-designer");
 }
+
 
 KParts::Part* QtDesignerDocument::partForView(QWidget*) const
 {
@@ -217,8 +225,8 @@ Sublime::View *QtDesignerDocument::newView(Sublime::Document* doc)
         uiFile.open(QIODevice::ReadOnly | QIODevice::Text);
 
         m_form = designerPlugin()->designer()->formWindowManager()->createFormWindow();
-	  qDebug() << "now we have" << m_form->core()->formWindowManager()->formWindowCount() << 
-"formwindows";
+	  qDebug() << "now we have" << m_form->core()->formWindowManager()->formWindowCount()
+	<< "formwindows";
         m_form->setFileName(url().toLocalFile());
         m_form->setContents(&uiFile);
         connect( m_form, SIGNAL(changed()), this, SLOT(formChanged()));

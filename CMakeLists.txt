@@ -24,21 +24,10 @@ include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(FeatureSummary)
 
-find_package(Qt5 ${MIN_QT_VER} CONFIG REQUIRED Core Gui Widgets Test Designer)
+find_package(Qt5 ${MIN_QT_VER} CONFIG REQUIRED Core Gui Widgets Test Designer DesignerComponents UiPlugin UiTools)
 find_package(KF5 ${MIN_KF_VER} REQUIRED COMPONENTS ItemModels TextEditor)
 find_package(KDevelop ${MIN_KDEV_VERSION} REQUIRED)
 find_package(KDevPlatform ${MIN_KDEV_VERSION} REQUIRED CONFIG)
-
-include_directories(
-    ${KDevPlatform_Include_Full_DIR}
-    ${KDevelop_Include_Full_DIR}
-    ${KDevPlatform_DIR}
-    ${KDevelop_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_SOURCE_DIR}
-    "/usr/include/qt5/"
-)
 
 include_directories( ${qtdesigner_SOURCE_DIR} ${qtdesigner_BINARY_DIR})
 
@@ -58,7 +47,6 @@ kdevplatform_add_plugin(kdevqtdesigner JSON kdevqtdesigner.json SOURCES
 		${kdevqtdesigner_PART_SRCS})
 
 
-
 #TARGET_LINK_LIBRARIES(kdevqtdesigner ${KDE4_KDEUI_LIBS} ${KDE4_KTEXTEDITOR_LIBS} 
 #${KDEVPLATFORM_INTERFACES_LIBRARIES} ${QT_QTDESIGNER_LIBRARY} ${QT_QTDESIGNERCOMPONENTS_LIBRARY} 
 #${KDEVPLATFORM_SUBLIME_LIBRARIES})
@@ -70,9 +58,10 @@ TARGET_LINK_LIBRARIES(kdevqtdesigner
     KDev::Shell
     KF5::WidgetsAddons
     Qt5::UiPlugin
+    Qt5::Designer
+    Qt5::DesignerComponents
     )
 install(TARGETS kdevqtdesigner DESTINATION ${PLUGIN_INSTALL_DIR})
-
 
 ########### install files ###############
 
